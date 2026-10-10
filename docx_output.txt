@@ -1,0 +1,624 @@
+Rabyte-Tech
+Digital Product Discovery Marketplace
+Full Architecture + URL Product Importer + Profile-as-Store
+Version 2.0 • October 2026
+Core product rule: Rabyte-Tech is a free digital-product discovery and listing marketplace. It does not process the underlying sale. A visitor discovers a product on Rabyte-Tech and is sent to the seller's original external product page or checkout URL.
+Major architecture update: the seller's normal user profile acts as the seller's public storefront. There is no separate Store entity, no separate Store Name field, and no Store Category field. Sellers add products to their profile, and visitors can browse all of that seller's published products from the profile page.
+Major onboarding update: sellers can paste a valid product-page URL. The platform detects the supported source, fetches the public page server-side, extracts available product metadata/content, creates a draft, and lets the seller review and edit it before publishing. No third-party product API is required for the initial implementation.
+Document Scope
+This document is the updated technical and product specification derived from the previous Rabyte-Tech Digital Product Marketplace architecture, with the new seller-profile storefront model and URL-only product importer incorporated as first-class features.
+Area
+Decision
+Marketplace model
+Free discovery/listing platform; no native checkout.
+Account model
+One account can browse, submit, review and manage products.
+Seller storefront
+User profile itself acts as the storefront.
+Store naming
+No separate store name.
+Store categorization
+No separate store category.
+Product submission
+Paste a product-page URL and import public data.
+Initial integrations
+URL/page parsing only; no external product APIs.
+Supported adapters
+Gumroad, Payhip, Lemon Squeezy, CosmoFit, Other.
+Image strategy
+Do not rely on external image URLs. MVP stores one primary marketplace cover image uploaded by the seller.
+External sales
+Not processed or verified by Rabyte-Tech.
+Analytics
+Views, unique visitors, return visits, outbound clicks, ratings, testimonials.
+Future country logic
+Country-aware ranking/featured logic can be added later; not part of MVP behavior.
+1. Product Goal
+Build a clean, premium, SEO-friendly directory where creators can list digital products such as eBooks, software, templates, courses, AI tools, design assets and other digital goods. Rabyte-Tech provides discovery, product presentation, profile-level seller exposure, reviews and outbound traffic measurement. The actual transaction remains on the seller's external platform.
+Primary user journey: Discover → Open product → Review → Click external purchase link.
+Seller journey: Register → Paste product URL → Import → Review/edit → Add primary image → Submit → Publish.
+Seller profile journey: Open seller profile → See seller credibility and product catalogue → Open any product.
+No native payment gateway, wallet, checkout or digital-file delivery in MVP.
+2. Core Product Principles
+Keep seller onboarding extremely low-friction.
+Never require the seller to manually retype information that is publicly available on the source product page when it can be safely extracted.
+Treat imported information as a draft, not as unquestioned truth.
+Keep source URL and source platform metadata for traceability.
+Do not claim external sales, revenue or conversion numbers as Rabyte-Tech-verified facts.
+The seller controls their profile and can manage their listed products from one dashboard.
+A product must resolve to a specific product/detail page. A generic store homepage or domain root is not an acceptable product URL.
+Rabyte-Tech should host its own primary product cover image instead of depending on external image hotlinking.
+3. Seller Profile as Storefront
+The seller profile is the storefront. There is no separate Store object in the product model. A public user profile can function as a catalogue page containing the seller's identity, credibility information and published products.
+3.1 Public seller profile URL
+Recommended route: /seller/[username] or /u/[username]. The final route should be chosen once during implementation and used consistently for canonical URLs.
+3.2 Profile page layout
+Profile avatar/logo.
+Seller display name.
+Short seller bio/about text.
+Joined date or member-since information, if desired.
+Total published products.
+Average product rating.
+Total ratings/reviews.
+Total approved testimonials.
+Top testimonials section.
+Published product grid.
+Product categories represented by the seller, derived from listed products rather than stored as a Store Category.
+Optional external social/profile links.
+Report profile action.
+The page should visually feel like a storefront, but the data model remains a user profile. This avoids creating a second identity layer and keeps account management simple.
+3.3 What is deliberately NOT present
+No separate Store Name.
+No separate Store ID.
+No separate Store Category.
+No store subscription.
+No store-level checkout.
+No store-level payment processing.
+4. Product URL Importer
+The importer is the primary seller onboarding mechanism. The seller pastes a direct product-page URL. The backend detects the source platform, fetches the public page, extracts available information and creates an editable product draft.
+4.1 Seller flow
+Seller opens Dashboard → Add Product.
+Seller pastes a direct product-page URL.
+Client performs basic syntax validation.
+Server performs strict URL validation and platform detection.
+Server fetches the public page with controlled timeouts and response-size limits.
+Platform adapter attempts structured extraction first.
+Generic metadata extraction is used as fallback.
+Extracted fields are normalized into the Rabyte-Tech product draft model.
+Seller reviews the imported data.
+Seller may edit the title, description, category, tags and other marketplace fields.
+Seller uploads one primary cover image for Rabyte-Tech.
+Seller confirms the listing.
+System checks duplicate URL/product conditions and moderation rules.
+Product enters pending or published state according to the configured moderation mode.
+4.2 Accepted source types
+Source
+Initial method
+Notes
+Gumroad
+Public product-page HTML + metadata parsing
+Use direct product URLs, not profile/store root URLs.
+Payhip
+Public product-page HTML + metadata parsing
+Use direct product URLs; unlisted/inaccessible pages may fail import.
+Lemon Squeezy
+Public product-page HTML + metadata parsing
+No API key required for initial importer.
+CosmoFit
+URL/page adapter
+Exact domain and page patterns must be configured after live-page validation.
+Other
+Generic public-page parser
+Must still be a specific product/detail page and must pass URL/content validation.
+Platform adapters should be modular. Each adapter should expose detect(url), fetch(url), parse(document) and normalize(data) behavior. The Other adapter is intentionally conservative and should not attempt to scrape arbitrary private or authenticated pages.
+5. Strict Product URL Rules
+The URL rule is intentionally strict. A seller cannot submit only a domain root or generic store homepage and call it a product. The marketplace needs a specific product page so the listing represents one identifiable product.
+Input example
+Decision
+Reason
+https://example.com
+Reject
+Domain root; no specific product.
+https://example.com/
+Reject
+Generic homepage.
+https://example.com/store
+Reject
+Store/category page rather than one product.
+https://example.com/product/ai-content-pack
+Accept candidate
+Specific product path.
+https://seller.gumroad.com/l/abc123
+Accept candidate
+Gumroad product URL pattern.
+https://payhip.com/b/abcde
+Accept candidate
+Payhip product-style URL.
+https://.../product-name
+Accept candidate
+Specific path, subject to successful page validation.
+Validation must not rely only on URL shape. After fetching, the server must confirm that the page contains product-level evidence such as a product title, canonical/product metadata, purchase CTA, structured product information or other platform-specific indicators.
+5.1 Redirect handling
+Redirects are allowed only when the final destination remains within an approved/validated source or clearly resolves to the intended product page. Redirect chains must be limited and private/internal destinations must be blocked.
+5.2 Duplicate protection
+Normalize the canonical URL before duplicate comparison.
+Prevent the same external product URL from being submitted repeatedly by the same or different sellers unless an admin override is used.
+Keep the original submitted URL and final canonical URL for auditability.
+6. Data Extraction Model
+The importer should extract only information that is publicly available on the page and safe to normalize. Availability differs by platform and by individual product page. Therefore every imported field has an extraction status and should not be assumed to exist.
+Field
+Import priority
+Behavior
+Product title
+Required
+Primary identifier; reject import if no usable title is found.
+Short description
+High
+Use OG/meta/structured summary when available.
+Full description
+High
+Extract product-specific content and sanitize HTML.
+Source category
+Medium
+Capture if publicly exposed.
+Tags/keywords
+Medium
+Capture when publicly visible.
+Price
+High
+Capture visible price where available; mark as source-reported.
+Currency
+High
+Capture when available.
+Sales count
+Optional
+Capture only if the public page exposes a count; never present as Rabyte-Tech verified.
+Rating
+Optional
+Capture only if publicly visible; distinguish imported source rating from Rabyte-Tech rating.
+Review count
+Optional
+Capture when publicly visible.
+Testimonials/reviews
+Optional
+Do not blindly import user-generated reviews; use only where policy/rights and source structure permit.
+Seller/store name
+Optional
+Can be captured as source metadata, but it does not create a separate Rabyte-Tech Store entity.
+Canonical URL
+High
+Used for duplicate detection and canonical linking.
+Product slug
+Medium
+Capture if exposed; generate a Rabyte-Tech slug independently.
+Product type
+Medium
+Infer from source metadata/category when possible; allow seller correction.
+Product images
+Do not depend on imported copies
+Do not use external hotlinked images as the marketplace's permanent image source in MVP.
+Source platform
+Required
+Gumroad, Payhip, Lemon Squeezy, CosmoFit or Other.
+Important: not every platform exposes every field. The UI should show a clear import result such as 'Imported 8 of 12 available fields' rather than pretending that missing data was found.
+7. Source-Reported Sales Data
+The requested sales-count feature is supported as an opportunistic extraction. If a source page publicly exposes a sales number, the importer can store it as source-reported data.
+Database field example: source_sales_count.
+Additional field: source_sales_count_visible = true/false.
+Additional field: source_sales_count_checked_at.
+Public UI label should be 'Sales reported by source' or similar, not 'Verified sales'.
+If the page does not expose a sales count, do not invent one and do not infer sales from likes, reviews or traffic.
+Rabyte-Tech should never combine source-reported sales with Rabyte-Tech click analytics and call the result revenue or verified sales.
+8. Image Strategy
+The revised MVP deliberately avoids depending on external product images. External image URLs can disappear, change, block hotlinking or change permissions. Rabyte-Tech therefore keeps its own primary marketplace image.
+8.1 MVP image rule
+One primary product cover image is the standard seller upload.
+Seller can replace the image before or after publication.
+Optional additional images can be supported later without changing the core model.
+Imported source image URLs may be recorded as temporary extraction metadata, but the published marketplace page should use the R2-hosted marketplace image.
+Use Cloudflare R2 for the actual stored image.
+D1 stores the R2 key and image metadata, not the binary file.
+8.2 Upload flow
+Seller selects/upload the primary image.
+Server validates MIME type, file size and dimensions.
+Browser uploads directly to R2 using a short-lived presigned upload URL.
+Worker verifies/records the object metadata.
+D1 stores the R2 object key, alt text and sort order.
+9. Product Page Architecture
+The marketplace remains product-first. The external URL is the source of truth for the purchase destination, while the Rabyte-Tech product page is the discovery and presentation layer.
+Breadcrumbs.
+Primary cover image.
+Product title.
+Short value proposition.
+Source platform badge.
+Source-reported price/currency, when available.
+Source-reported sales count, when publicly available and clearly labelled.
+Rabyte-Tech rating and review count.
+Full normalized description.
+Category and tags.
+Seller profile summary linking to the seller's profile-as-store.
+Primary CTA: Visit Seller / Get Product / Buy on Source.
+Outbound click tracking before redirect.
+Rabyte-Tech testimonials/reviews.
+Related products.
+Same-category products.
+Report product / copyright complaint.
+10. Seller Profile / Storefront UI
+Recommended visual structure:
+Header: avatar, seller name, short bio, joined date.
+Trust strip: average rating, total reviews, published product count.
+Top testimonials: 2–4 strongest approved testimonials.
+Product catalogue: responsive product grid.
+Category chips: derived dynamically from the seller's listed products, not a manually selected Store Category.
+Product sorting: newest, top rated, most viewed, most clicked.
+Profile report action.
+The seller page should look and behave like a store because visitors need a catalogue experience, but the system should continue to describe it internally as a public seller profile. This keeps the identity model simple and avoids duplicated seller/store records.
+11. Reviews, Ratings and Testimonials
+Rabyte-Tech's own rating system is separate from any rating that may be visible on an external source page.
+Rabyte-Tech rating: generated from reviews submitted on Rabyte-Tech.
+Source rating: imported only when publicly visible and clearly labelled as source data.
+Rabyte-Tech testimonials: approved reviews/testimonials from Rabyte-Tech users.
+Top testimonials on seller profile: rank approved testimonials using rating, recency and moderation status.
+Do not silently merge external reviews with internal reviews.
+12. Category Model
+Products still have categories. Sellers do not create a separate Store Category. When importing a product, the system should first attempt to map the source category into a Rabyte-Tech category. The seller can correct the product category before submission.
+Example marketplace categories: eBooks, Software, Templates, Courses, AI Tools, Design Assets, Marketing, Business, Productivity, Creator Tools.
+Seller profile categories are derived from the seller's published products.
+Future country-specific ranking must operate independently from the category model.
+13. Future Country-Aware Ranking
+The requested country-aware logic is intentionally deferred. The architecture should nevertheless store the signals needed to add it later.
+Store anonymous/consented coarse location or country-level request signal where legally and technically appropriate.
+Maintain a product source/country relevance score separately from the core product record.
+Future example: visitors from India may receive higher ranking exposure for selected CosmoFit products.
+Do not hard-code the India/CosmoFit rule into the initial product ranking implementation.
+Future ranking can combine country, category, freshness, rating, engagement and paid featured placement.
+14. Supported Platform Adapter Strategy
+The importer should be written as an adapter registry rather than one giant scraper. This makes failures isolated and makes new platforms cheap to add.
+Adapter
+Detection
+Primary extraction sources
+Fallback
+GumroadAdapter
+Host/domain + product path
+Structured page data, OG/meta, visible product data
+Generic parser
+PayhipAdapter
+Host/domain + product path
+Product-page HTML, OG/meta, structured data
+Generic parser
+LemonSqueezyAdapter
+Host/domain + product path
+Product-page HTML, OG/meta, structured data
+Generic parser
+CosmoFitAdapter
+Configured host/path rules
+Live page structure after validation
+Generic parser
+OtherAdapter
+Generic URL validation
+OG/meta, JSON-LD, visible product signals
+Manual review
+The platform must not assume that a page exposes identical fields across all sellers. Adapter output should therefore be a normalized object with nullable fields and an extraction report.
+15. Import Result / Seller UX
+After import, show a compact report before the edit form:
+Check
+Example
+Page detected
+Gumroad product page
+Product title
+Found
+Description
+Found
+Category
+Found / Not found
+Price
+Found / Not found
+Sales count
+Found / Not publicly exposed
+Source rating
+Found / Not publicly exposed
+Canonical URL
+Found
+Primary marketplace image
+Seller upload required
+Duplicate check
+Passed / Existing listing found
+The seller should never need to understand scraping, HTML, metadata or APIs. The UI should simply say that product information was imported and needs review.
+16. Database Architecture: D1
+The previous schema remains the foundation, with seller-profile storefront and source-import fields added.
+Table
+Key additions / purpose
+users
+id, email, password_hash, name, username, avatar_url, bio, role, status, created_at
+sessions
+id, user_id, token_hash, expires_at, created_at
+password_resets
+id, user_id, token_hash, expires_at, used_at
+categories
+id, name, slug, description, icon, seo_title, seo_description
+products
+id, seller_id, category_id, title, slug, description, source_platform, source_url, canonical_url, source_price, source_currency, source_sales_count, source_rating, source_review_count, import_status, seo_score, status, created_at, updated_at
+product_imports
+id, product_id, submitted_url, final_url, platform, imported_fields_json, source_snapshot_hash, imported_at, parser_version, status
+product_images
+id, product_id, r2_key, alt_text, sort_order, source_type, created_at
+product_stats
+product_id, page_views, unique_visitors, outbound_clicks, return_visitors, updated_at
+events
+id, product_id, user_id/null, event_type, session_id, referrer, country_code/null, created_at
+ratings
+id, product_id, user_id, rating, review_text, status, created_at
+testimonials
+id, product_id, user_id, content, status, created_at
+featured_placements
+id, product_id, start_at, end_at, position, status, campaign_ref
+blogs
+id, author_id, title, slug, content, status, published_at, seo_title, seo_description
+reports
+id, product_id, reporter_id, type, reason, status, created_at
+profile_reports
+id, seller_id, reporter_id, reason, status, created_at
+contact_tickets
+id, sender_email, name, type, subject, body, status, assigned_to, created_at
+email_messages
+id, ticket_id, direction, from_email, to_email, subject, body_ref, status, created_at
+17. Important Data Separation
+Keep three categories of data separate so the UI never creates false claims.
+Data class
+Example
+Trust label
+Source-reported
+Price, public sales count, source rating
+Reported by external source
+Rabyte-Tech measured
+Page views, outbound clicks, internal reviews
+Measured/created by Rabyte-Tech
+Seller-entered
+Bio, marketplace category correction, custom description edits
+Provided/edited by seller
+18. Logged-in Seller Dashboard
+The same account manages both identity and products.
+/dashboard
+/dashboard/products
+/dashboard/products/new
+/dashboard/products/[id]/edit
+/dashboard/analytics
+/dashboard/reviews
+/dashboard/blog
+/dashboard/profile
+/dashboard/settings
+Dashboard profile editor should include avatar, display name, username, bio and optional social links. There should be no Store Name field.
+19. Admin Panel
+/admin
+/admin/products
+/admin/submissions
+/admin/users
+/admin/categories
+/admin/reviews
+/admin/featured
+/admin/advertising
+/admin/blog
+/admin/reports
+/admin/emails
+/admin/analytics
+/admin/settings
+Admin product moderation should display the submitted source URL, detected platform, imported field report, canonical URL, seller identity, product content, image, duplicate matches and moderation history.
+20. Importer Moderation Controls
+Platform allowlist.
+Domain/path pattern validation.
+Response timeout and maximum response size.
+Maximum redirect count.
+Private IP/localhost/internal-network blocking.
+HTML/content-type validation.
+Duplicate canonical URL detection.
+Basic product-page evidence check.
+Content sanitization.
+Rate limiting per user/IP.
+Admin re-import and parser retry controls.
+Parser version tracking so extraction changes can be audited.
+21. Analytics / KPI Definition
+Metric
+Definition
+Product Page Views
+Total Rabyte-Tech product page loads.
+Unique Visitors
+Estimated unique visitors using privacy-conscious session identifiers.
+Return Visitors
+Visitors who return to a product/profile after an earlier visit.
+Outbound Clicks
+Clicks from Rabyte-Tech to the external source URL.
+Internal Ratings
+Ratings submitted through Rabyte-Tech.
+Testimonials
+Approved Rabyte-Tech testimonials.
+Source Sales Count
+Only when publicly exposed by the source; not verified by Rabyte-Tech.
+Sales / Revenue
+Not available and not claimed by Rabyte-Tech.
+22. SEO Architecture
+Unique product title and Rabyte-Tech slug.
+Editable meta title and meta description.
+Canonical Rabyte-Tech product URL.
+Product, BreadcrumbList and AggregateRating structured data only where the displayed data supports it.
+Indexable seller profile pages.
+Category landing pages.
+Internal links between products, sellers, categories and blog content.
+Dynamic XML sitemap.
+robots.txt.
+Image alt text.
+Clean, stable URLs.
+No mass-generated thin pages from imported content.
+23. Email Architecture
+The previous email design remains valid. Recommended addresses:
+noreply@YOURDOMAIN
+support@YOURDOMAIN
+contact@YOURDOMAIN
+ads@YOURDOMAIN
+dmca@YOURDOMAIN
+Incoming support/contact/ads/DMCA messages can be routed through Cloudflare Email Routing to an Email Worker, stored as ticket/thread metadata in D1, and displayed in /admin/emails. Admin replies can be sent through Cloudflare Email Service.
+24. Authentication and Password Reset
+Email/password registration only for MVP.
+Strong server-side password hashing.
+Secure HttpOnly SameSite session cookies.
+Password reset tokens stored only as hashes.
+Short expiry and one-time use.
+Invalidate active sessions after successful password reset.
+Generic forgot-password response to reduce account enumeration.
+25. Cloudflare Architecture
+Recommended full-stack deployment remains Cloudflare Workers with Next.js/vinext. Use D1 for relational data, R2 for images, KV only where eventual consistency is acceptable, Email Service for transactional mail, Email Routing for inbound mail and Turnstile/WAF/rate limiting for abuse controls.
+High-level flow:
+Browser → Cloudflare DNS/CDN → Next.js on Workers → D1 + R2 + KV (selectively) + Email Service + Turnstile/WAF
+Importer flow:
+Seller URL → Worker validation → Platform adapter → public page fetch → extraction/normalization → draft in D1 → seller review → publish
+Purchase flow:
+Rabyte-Tech product page → outbound event → external product page/checkout → user may return
+26. Security Baseline
+Never store plaintext passwords.
+Never expose Cloudflare credentials or secrets to the browser.
+Use strict SSRF protections for the URL importer.
+Block localhost, RFC1918/private ranges and internal destinations.
+Limit fetch timeout, response bytes and redirect count.
+Sanitize imported HTML before rendering.
+Use a safe allowlist for external protocols; HTTPS only for product URLs.
+Use R2 presigned uploads with short expiry.
+Rate-limit authentication, importer, review and contact endpoints.
+Use Turnstile where appropriate.
+Require admin role checks on every admin mutation endpoint.
+Record audit events for imports, bans, edits, featured placements and admin actions.
+27. Copyright, Content Rights and Source Compliance
+The importer must not be treated as permission to copy anything that is not lawfully available for reuse. The initial implementation should prefer public metadata and product information needed to create a listing, while avoiding unnecessary duplication of protected content. The seller should confirm that they have the right to list and promote the product and the associated information.
+Provide a DMCA/copyright reporting route.
+Allow admins to remove listings and source-derived content when a valid complaint is received.
+Do not import private/authenticated content.
+Do not bypass paywalls, login walls, CAPTCHAs or access controls.
+Do not claim that imported third-party sales numbers or ratings are independently verified.
+Keep a source URL and import timestamp for auditability.
+28. What NOT to Build in MVP
+Native payment gateway.
+Wallet or balance.
+External platform API integrations.
+Seller-specific API keys.
+Native digital file delivery.
+Seller subscriptions.
+Complex affiliate tracking.
+Social login.
+Buyer-seller live chat.
+Country-based ranking rules.
+Automatic external-image hotlink dependency.
+Automatic overwrite of seller-edited content on re-import.
+Mass scraping/crawling of entire external stores.
+29. Future Re-import / Refresh Feature
+The data model should allow a seller to refresh the source page later. Re-import must compare the new source snapshot with the seller's current marketplace content instead of blindly overwriting it.
+Field
+Behavior
+New title detected
+Show diff; seller approves before overwrite.
+New description detected
+Show diff; preserve seller edits by default.
+New price detected
+Update source-reported price after seller review or mark for refresh.
+New sales count
+Update source-reported metric with timestamp.
+New canonical URL
+Require validation before updating source URL.
+New source image
+Do not automatically replace the marketplace cover image.
+30. Suggested Public Routes
+/
+/products
+/products/[slug]
+/categories
+/categories/[slug]
+/search
+/featured
+/top-rated
+/seller/[username]
+/submit
+/login
+/register
+/forgot-password
+/reset-password/[token]
+/about
+/contact
+/faq
+/blog
+/blog/[slug]
+/advertise
+/terms
+/privacy
+/dmca
+/seller-policy
+31. Suggested Build Order
+Phase
+Work
+1
+Cloudflare Workers/Next.js, D1 migrations, R2, base UI.
+2
+Homepage, product listing, category, search and product detail pages.
+3
+Email/password auth, sessions, reset password.
+4
+Seller profile-as-storefront and dashboard.
+5
+URL importer, platform detection, adapters, normalization and validation.
+6
+Primary image upload to R2 and product editing.
+7
+Ratings, testimonials, seller profile trust metrics.
+8
+Product analytics and outbound click tracking.
+9
+Admin moderation, reports, featured placements and parser controls.
+10
+Email admin inbox, SEO, sitemap, security testing and production deployment.
+32. Final Architecture
+User account = identity + seller profile + product catalogue. There is no separate Store entity.
+Product listing = Rabyte-Tech presentation layer + external source URL. Rabyte-Tech does not own or process the underlying transaction.
+Importer = URL-only, server-side public-page extraction with platform adapters. No third-party product API is required for the initial release.
+Images = seller-uploaded primary cover stored in R2. Do not rely on permanent external image hotlinks.
+Analytics = Rabyte-Tech page views, unique/return visitors, outbound clicks, ratings and testimonials. External sales remain source-reported only when publicly visible.
+Country ranking = reserved architecture signal; India/CosmoFit preference is a future rule, not an MVP rule.
+33. Current External Platform Notes
+These notes are based on currently available public/official platform documentation and should be re-checked when the importer is implemented because external page structures and terms can change.
+Gumroad product/profile pages expose catalogue-related public data in certain page contexts, and Gumroad supports custom product URLs.
+Payhip provides direct product URLs and product pages with title, description, images and visibility options.
+Lemon Squeezy product data includes name, description, thumbnail URLs, price and a buy-now URL in its product object, while its product setup supports multiple product images. The MVP importer will not use the API, but these documented fields help define the normalized data model.
+The exact CosmoFit domain/page structure should be validated with a real product URL before its adapter is finalized. The name 'CosmoFit' is ambiguous on the public web, so the implementation should not hard-code an unverified domain.
+34. Implementation Checklist
+☐ One account model implemented.
+☐ Public seller profile works as catalogue/storefront.
+☐ No Store Name or Store Category fields.
+☐ Direct product URL validation implemented.
+☐ Domain-root URLs rejected.
+☐ Product-page evidence validation implemented.
+☐ Gumroad adapter implemented.
+☐ Payhip adapter implemented.
+☐ Lemon Squeezy adapter implemented.
+☐ CosmoFit adapter configured after domain confirmation.
+☐ Other/generic adapter implemented conservatively.
+☐ Importer extraction report implemented.
+☐ Source vs seller-edited data separation implemented.
+☐ Source sales count stored only when publicly visible.
+☐ Source rating separated from Rabyte-Tech rating.
+☐ Primary image upload to R2 implemented.
+☐ SSRF protections implemented.
+☐ Duplicate product URL detection implemented.
+☐ Seller profile product grid implemented.
+☐ Top testimonials implemented.
+☐ Outbound click tracking implemented.
+☐ Future country ranking fields reserved but inactive.
+☐ Admin moderation and parser audit trail implemented.
+35. References
+Cloudflare Workers / Next.js: https://developers.cloudflare.com/workers/framework-guides/web-apps/nextjs/
+Cloudflare D1: https://developers.cloudflare.com/workers/databases/connecting-to-databases/
+Cloudflare R2 presigned URLs: https://developers.cloudflare.com/r2/api/s3/presigned-urls/
+Cloudflare Email Service: https://developers.cloudflare.com/email-service/
+Cloudflare Email Sending: https://developers.cloudflare.com/email-service/get-started/send-emails/
+Cloudflare Email Routing: https://developers.cloudflare.com/email-service/get-started/route-emails/
+Gumroad Help: https://gumroad.com/help/article/124-your-gumroad-profile-page
+Gumroad Custom Product URLs: https://gumroad.com/help/article/81-custom-product-urls
+Payhip Product URLs: https://help.payhip.com/article/67-find-your-store-and-product-urls
+Payhip Digital Products: https://help.payhip.com/article/59-adding-a-digital-product
+Lemon Squeezy Products: https://docs.lemonsqueezy.com/help/products
+Lemon Squeezy Product Object: https://docs.lemonsqueezy.com/api/products/the-product-object
+Rabyte-Tech • Digital Product Discovery Marketplace • Architecture v2.0

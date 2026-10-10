@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard | Rabyte-Tech</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/js/components/user-sidebar.js"></script>
+    <script src="/js/components/user-navbar.js"></script>
+    <script src="/js/components/user-footer.js"></script>
+    <style>
+      body { margin: 0; font-family: 'Inter', sans-serif; background: #f8fafc; }
+      main { margin-left: 250px; padding: 30px; min-height: 80vh; }
+      .card { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+      .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+      .stat-card { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+    
+    <user-sidebar></user-sidebar>
+    <user-navbar></user-navbar>
+
+    <main>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h1 style="color: #0f172a; margin: 0;">Welcome, Creator!</h1>
+          <a href="/user/submit.html" style="background: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: 500;">+ Submit Product</a>
+        </div>
+        
+        <div class="stat-grid">
+          <div class="stat-card">
+            <small style="color: #64748b;">Total Products</small>
+            <h2 style="margin: 5px 0 0 0; color: #0f172a;">12</h2>
+          </div>
+          <div class="stat-card">
+            <small style="color: #64748b;">Total Views</small>
+            <h2 style="margin: 5px 0 0 0; color: #0f172a;">4,502</h2>
+          </div>
+          <div class="stat-card">
+            <small style="color: #64748b;">Trust Score</small>
+            <h2 style="margin: 5px 0 0 0; color: #22c55e;">95</h2>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top: 0;">Recent Activity</h3>
+          <p style="color: #64748b;">Your product "Next.js Boilerplate" was approved by moderation.</p>
+        </div>
+    </main>
+
+    <user-footer></user-footer>
+
+    <script>
+      // Simple auth check for user dashboard
+      document.addEventListener("DOMContentLoaded", async () => {
+        try {
+          const res = await fetch("/api/auth/me");
+          const data = await res.json();
+          if (!data.user) {
+            window.location.href = "/auth/login.html";
+          }
+        } catch (e) {
+          window.location.href = "/auth/login.html";
+        }
+      });
+    </script>
+</body>
+</html>

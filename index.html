@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rabyte-Tech | The Zero-Fee Digital Product Marketplace</title>
+  <meta name="description" content="Discover top-tier digital products, AI tools, templates, and courses. Creators can list their products for free and keep 100% of their revenue.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <template-header></template-header>
+
+  <main>
+    <!-- Hero Slider Container -->
+    <div id="hero-slider" class="hero-slider-wrapper">
+      <div id="slides-container"></div>
+      <div id="slider-nav" class="slider-nav"></div>
+    </div>
+
+    <!-- Featured Section -->
+    <section class="category-section container section-spacing">
+      <div class="section-header fade-in-up">
+        <div class="header-left">
+          <h2><span class="icon-box icon-yellow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+          </span> Featured Tools & Assets</h2>
+          <p>Hand-picked AI systems and SaaS templates worth discovering.</p>
+        </div>
+        <a href="/featured" class="view-all-link">View All Featured &rarr;</a>
+      </div>
+      <div id="featured-products" class="products"></div>
+    </section>
+
+    <!-- Newly Added Section -->
+    <section class="category-section container section-spacing">
+      <div class="section-header fade-in-up">
+        <div class="header-left">
+          <h2><span class="icon-box icon-lightning">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </span> Newly Added Assets</h2>
+          <p>Check out the latest digital resources from our top creators.</p>
+        </div>
+        <a href="/products" class="view-all-link">View All &rarr;</a>
+      </div>
+      <div id="new-products" class="products"></div>
+    </section>
+
+    <!-- Top Rated Section -->
+    <section class="category-section container section-spacing">
+      <div class="section-header fade-in-up">
+        <div class="header-left">
+          <h2><span class="icon-box icon-yellow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>
+          </span> Top Rated Systems</h2>
+          <p>Explore the highest-rated architectures from our community.</p>
+        </div>
+        <a href="/top-rated" class="view-all-link">View All &rarr;</a>
+      </div>
+      <div id="top-products" class="products"></div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="container cta-container">
+        <div class="cta-content">
+          <span class="cta-badge">FOR CREATORS</span>
+          <h2>Have a SaaS or AI tool?</h2>
+          <p>List it for free and let other developers discover it.</p>
+          <div class="cta-features">
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg> No listing fee</span>
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg> Reach more customers</span>
+            <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg> Grow your audience</span>
+          </div>
+        </div>
+        <div class="cta-action">
+          <div class="up-arrow-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+          </div>
+          <a href="/submit" class="btn-cta">Submit Your Product &rarr;</a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Categories Section -->
+    <section class="category-section container section-spacing">
+      <div class="section-header fade-in-up">
+        <div class="header-left">
+          <h2><span class="icon-box icon-orange">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span> Browse by Category</h2>
+          <p>Explore digital products in your area of interest.</p>
+        </div>
+        <a href="/categories" class="view-all-link">View All Categories &rarr;</a>
+      </div>
+      <div id="category-grid" class="category-grid"></div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <template-footer></template-footer>
+
+  <script src="js/components/header.js"></script>
+  <script src="js/components/footer.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

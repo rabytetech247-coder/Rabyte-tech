@@ -1,1 +1,0 @@
-export function Field({label,placeholder,type="text"}:{label:string;placeholder?:string;type?:string}){return <label className="field"><span>{label}</span><input type={type} placeholder={placeholder}/></label>}export function Button({children}:{children:React.ReactNode}){return <button className="button">{children}</button>}

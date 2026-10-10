@@ -1,16 +1,28 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "rabyte-tech-digital-product-platform",
-  "compatibility_date": "2024-09-23",
+  "compatibility_date": "2024-10-10",
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "pages_build_output_dir": ".vercel/output/static",
+  "pages_build_output_dir": ".",
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "rabyte-db",
-      "database_id": "da825729-4b8c-4c62-a6a5-e6d519dd6377"
+      "database_name": "rabyte_d1",
+      "database_id": "bbe9d60f-fd8d-4ae9-b772-33180c1b17b8"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "ASSETS_BUCKET",
+      "bucket_name": "rabyte-store-assets"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "d77e4aec3bc34a148a853a3d7c9097af"
     }
   ]
 }

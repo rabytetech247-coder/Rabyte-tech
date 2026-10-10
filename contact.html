@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Contact Us | Rabyte-Tech</title>
+  <meta name="description" content="Get in touch with the Rabyte-Tech team. Whether you need support with a digital product or want to list your SaaS template, we are here to help.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/js/components/header.js"></script>
+  <script src="/js/components/footer.js"></script>
+</head>
+<body style="font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0;">
+  <template-header></template-header>
+  <main>
+    <div class="page-head" style="text-align:center;">
+      <div class="container">
+        <h1>Contact Us</h1>
+        <p style="margin:auto;">We'd love to hear from you. Here is how you can reach our team.</p>
+      </div>
+    </div>
+    <div class="container section-spacing">
+      <div class="form-grid" style="max-width:800px; margin:auto; gap: 40px;">
+        <div class="article content-card" style="margin-top: 0; display:flex; flex-direction:column; gap:20px;">
+          <h2>How can we help?</h2>
+          <p>If you're a buyer looking for a refund or technical support for a specific template, please contact the creator directly through your receipt.</p>
+          <p>For inquiries regarding platform partnerships, reporting malicious listings, or feedback about Rabyte-Tech, please fill out the form or email us directly.</p>
+          <div style="padding: 20px; background: #fff4eb; border-radius: 12px; border: 1px solid #ffe0b4;">
+            <strong style="color:var(--o);">Email Support</strong>
+            <div style="font-size:14px; font-weight:600; margin-top:5px; color:#111;">support@rabyte.com</div>
+          </div>
+        </div>
+        <div class="auth-card" style="width:100%; border:1px solid var(--bd); padding:30px; border-radius:15px; background:#fff;">
+          <form id="contact-form" onsubmit="event.preventDefault(); alert('Message sent successfully! We will get back to you soon.'); this.reset();">
+            <div class="field">
+              <span>Name</span>
+              <input type="text" required />
+            </div>
+            <div class="field">
+              <span>Email Address</span>
+              <input type="email" required />
+            </div>
+            <div class="field">
+              <span>Message</span>
+              <textarea required placeholder="How can we help you?"></textarea>
+            </div>
+            <button class="btn-cta" style="width:100%; justify-content:center;">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <template-footer></template-footer>
+  <script src="/js/auth.js"></script>
+</body>
+</html>
+

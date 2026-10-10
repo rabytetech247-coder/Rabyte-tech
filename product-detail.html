@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Product Details | Rabyte-Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/js/components/header.js"></script>
+  <script src="/js/components/footer.js"></script>
+</head>
+<body style="font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0;">
+
+  <template-header></template-header>
+
+  <main class="container section-spacing" style="min-height: 70vh;">
+    
+    <div id="loading" style="text-align:center; padding: 100px 0;">
+      <h2 style="color:var(--m);">Loading product details...</h2>
+    </div>
+
+    <div id="error" style="display:none; text-align:center; padding: 100px 0;">
+      <h2 style="color:#ef4444;">Product not found</h2>
+      <a href="/" class="btn-cta">Back to Home</a>
+    </div>
+
+    <div id="product-content" class="detail-grid" style="display:none;">
+      <!-- Left side: Image -->
+      <div>
+        <img id="detail-img" src="" alt="Product Image" class="detail-image" style="width:100%; border-radius:18px; box-shadow:0 20px 40px rgba(0,0,0,0.1); border: 1px solid var(--bd);">
+      </div>
+
+      <!-- Right side: Details -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+          <span id="detail-platform" class="badge" style="position:relative; top:0; left:0; display:inline-block;">Platform</span>
+        </div>
+        
+        <h1 id="detail-title" style="font-size: clamp(32px, 4vw, 48px); line-height: 1.1; letter-spacing: -0.04em; margin: 0 0 15px; color: #111;">Product Title</h1>
+        
+        <div class="rating big" style="font-size: 16px; margin-bottom: 20px; display:flex; align-items:center; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:var(--o);"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>
+          <strong id="detail-rating">5.0</strong> 
+          <span id="detail-reviews" style="color:#999;">(0 reviews)</span>
+        </div>
+
+        <p id="detail-desc" class="detail-lead" style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 30px;">
+          Product description goes here...
+        </p>
+
+        <div class="price" id="detail-price" style="font-size: 36px; font-weight: 800; color: #111; margin-bottom: 20px;">$0.00</div>
+
+        <a id="detail-buy-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn-cta" style="padding: 16px 32px; font-size: 16px; width: 100%; justify-content: center; margin-bottom: 25px;">
+          Get it on <span id="detail-btn-platform" style="margin-left:5px;">Platform</span> &rarr;
+        </a>
+
+        <div class="notice" style="background:#f8fafc; border-color:#e2e8f0; color:#475569;">
+          <strong>Note:</strong> You will be redirected to the creator's secure checkout page to complete this purchase. Rabyte-Tech takes 0% fees.
+        </div>
+
+        <div class="seller-box" style="margin-top: 30px; border-top: 1px solid var(--bd); padding-top: 20px;">
+          <div style="width:50px; height:50px; border-radius:50%; background:var(--o); color:#fff; display:grid; place-items:center; font-weight:bold; font-size:20px;" id="seller-avatar">U</div>
+          <div>
+            <div style="font-size:11px; color:#888; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Created By</div>
+            <div id="seller-name" style="font-weight:700; color:#111; font-size:16px;">Seller Name</div>
+            <div style="font-size:12px; color:#22c55e; font-weight:600;">Trust Score: <span id="seller-trust">50</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <template-footer></template-footer>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/product-detail.js"></script>
+</body>
+</html>
+

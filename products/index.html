@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>All Products | Rabyte-Tech</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/js/components/header.js"></script>
+  <script src="/js/components/footer.js"></script>
+</head>
+<body style="font-family: 'Inter', sans-serif; background: #f8fafc; margin: 0;">
+
+  <template-header></template-header>
+
+  <main class="container" style="padding: 40px 0; min-height: 70vh;">
+    <h1 style="color: #0f172a;">All Digital Products</h1>
+    <p>Browse our complete directory of tools and templates.</p>
+    <div id="product-grid" class="products">
+      <!-- Products will be injected here dynamically -->
+    </div>
+  </main>
+
+  <template-footer></template-footer>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    // Placeholder logic for products page
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("product-grid").innerHTML = "<p>Products will load here dynamically from the API...</p>";
+    });
+  </script>
+</body>
+</html>
+

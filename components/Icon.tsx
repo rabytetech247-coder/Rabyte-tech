@@ -1,4 +1,0 @@
-type Props={name:string;size?:number};
-export default function Icon({name,size=20}:Props){
-const c={width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const};
-const p:any={search:<><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,arrow:<><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></>,chevron:<path d="m9 18 6-6-6-6"/>,menu:<><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></>,plus:<><path d="M12 5v14"/><path d="M5 12h14"/></>,star:<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/>,check:<path d="m5 12 4 4L19 6"/>,lock:<><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,user:<><circle cx="12" cy="8" r="3"/><path d="M5 21c1-4 3-6 7-6s6 2 7 6"/></>};return <svg {...c}>{p[name]||p.star}</svg>}

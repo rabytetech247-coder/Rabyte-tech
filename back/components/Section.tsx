@@ -1,1 +1,0 @@
-export default function Section({eyebrow,title,description,children}:{eyebrow?:string;title:string;description?:string;children?:React.ReactNode}){return <section className="section container"><div className="heading"><div>{eyebrow&&<small className="eyebrow">{eyebrow}</small>}<h1>{title}</h1>{description&&<p>{description}</p>}</div></div>{children}</section>}
